@@ -43,26 +43,27 @@ const useMyContextProvider = () => {
 
 const USERS = firebase().collection('USERS');
 
-const createAccount = (email, password, fullName) => {
-  auth().createUserWithEmailAndPassword(email, password).then(() => {
-    Alert.alert(`Email: ${email}, đã tạo tài khoản thành công!!!`);
-    USERS.doc(email).set({
-      email,
-      password,
-      fullName,
-    });
-  }).catch(e => console.log(e.message));
+const createAccount = (navigation, email, password, fullname) => {
+  auth().createUserWithEmailAndPassword(email, password)
+    .then(response => {
+      USERS.doc(email).set({
+        email,
+        password,
+        fullname,
+      });
+      navigation.navigate("Login");
+    })
+    .catch(e => Alert.alert("Tài khoản đã tồn tại!"));
 };
 
-const login = (dispatch, email, password, fullName) => {
-  auth().signInWithEmailAndPassword(email, password).then(() => {
-    USERS.doc(email).onSnapshot(u => {
-      if (u.exists) {
-        console.log(`Đăng nhập thành công: ${u.id}`);
-        dispatch({ type: 'USER_LOGIN', value: u.data() });
-      }
-    });
-  }).catch(() => Alert.alert('Email hoặc Password bị sai!!!'));
+const login = (dispatch, email, password) => {
+  auth().signInWithEmailAndPassword(email, password)
+    .then(response =>
+      USERS.doc(email).get()
+        .then(u => dispatch({ type: "USER_LOGIN", value: u.data() }))
+        .catch(e => Alert.alert("Lỗi khi lấy dữ liệu người dùng:", e))
+    )
+    .catch(e => Alert.alert("Email hoặc Password không đúng!!!"));
 };
 
 const logout = (dispatch) => {

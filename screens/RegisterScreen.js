@@ -5,6 +5,7 @@ import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import Logo from '../assets/firebase_logo.png';
 import { HelperText, Button } from 'react-native-paper';
+import { createAccount } from '../src/store';
 
 export default function RegisterScreen({ navigation }) {
   const [fullname, setFullname] = useState('');
@@ -18,18 +19,14 @@ export default function RegisterScreen({ navigation }) {
 
   const USERS = firestore().collection("USER");
 
-  const handleCreateAccount = () => {
-    auth().createUserWithEmailAndPassword(email, password)
-      .then(response => {
-        USERS.doc(email).set({
-          fullname, email, password
-        });
-        Alert.alert('Đăng ký thành công', 'Bạn đã đăng ký tài khoản thành công!');
-        navigation.navigate('Login');
-      })
-      .catch(e => Alert.alert("Tài khoản đã tồn tại!"));
-  };
+  const handleRegister = () => {
+    if (hasErrorFullName() || hasErrorEmail() || hasErrorPassword() || hasErrorPasswordComfirm()) {
+      Alert.alert('Lỗi', 'Vui lòng kiểm tra lại thông tin nhập!');
+      return;
+    }
 
+    createAccount(email, password, fullname);
+  };
 
   const handleRegisterTouch = () => {
     navigation.navigate('Login');
@@ -68,7 +65,7 @@ export default function RegisterScreen({ navigation }) {
         style={styles.textInput}
       />      
 
-      <Button mode="contained" onPress={handleCreateAccount} style={styles.button}>
+      <Button mode="contained" onPress={handleRegister} style={styles.button}>
         Đăng ký
       </Button>
 
