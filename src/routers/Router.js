@@ -9,16 +9,14 @@ const Stack = createStackNavigator();
 
 function Router() {
   return (
-    <Stack.NavigationContainer>
       <Stack.Navigator
         initialRouteName="Login"
-        screenOptions={{headerShown: false}}
+        screenOptions={{ headerShown: false }}
       >
         <Stack.Screen name="Login" component={LoginScreen} options={{ title: 'Login' }} />
         <Stack.Screen name="Register" component={RegisterScreen} options={{ title: 'Register' }} />
         <Stack.Screen name="Home" component={HomeScreen} options={{ title: 'Home' }} />
       </Stack.Navigator>
-    </Stack.NavigationContainer>
   );
 }
 
